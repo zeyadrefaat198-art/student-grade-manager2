@@ -4,3 +4,8 @@ students_backup.txt
 students_temp.txt
 students_test.txt
 
+
+# Local test files and source backup
+main_before_load_fix.cpp
+main_test.cpp
+student_manager_test
