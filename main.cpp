@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <limits>
+#include <fstream>
 
 using namespace std;
 
@@ -20,6 +21,8 @@ struct Student {
 vector<Student> students;
 int nextId = 1;
 
+const string FILE_NAME = "students.txt";
+
 void calculate(Student &s) {
     s.total = 0;
 
@@ -29,6 +32,74 @@ void calculate(Student &s) {
 
     s.average = s.total / 3.0;
     s.status = (s.average >= 50) ? "Passed" : "Failed";
+}
+
+// Save students to file
+void saveData() {
+    ofstream file(FILE_NAME);
+
+    if (!file.is_open()) {
+        cout << "Error: Could not save data.\n";
+        return;
+    }
+
+    for (const Student &s : students) {
+        file << s.id << "\n";
+        file << s.name << "\n";
+
+        for (int i = 0; i < 3; i++) {
+            file << s.grades[i] << " ";
+        }
+
+        file << "\n";
+    }
+
+    file.close();
+}
+
+// Load students from file
+void loadData() {
+    ifstream file(FILE_NAME);
+
+    if (!file.is_open()) {
+        return;
+    }
+
+    Student s;
+    int maxId = 0;
+
+    while (file >> s.id) {
+        file.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        if (!getline(file, s.name)) {
+            break;
+        }
+
+        bool validGrades = true;
+
+        for (int i = 0; i < 3; i++) {
+            if (!(file >> s.grades[i])) {
+                validGrades = false;
+                break;
+            }
+        }
+
+        if (!validGrades) {
+            break;
+        }
+
+        file.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        calculate(s);
+        students.push_back(s);
+
+        if (s.id > maxId) {
+            maxId = s.id;
+        }
+    }
+
+    nextId = maxId + 1;
+    file.close();
 }
 
 int getInteger(string message) {
@@ -92,6 +163,8 @@ void addStudent() {
     calculate(s);
     students.push_back(s);
 
+    saveData();
+
     cout << "\nStudent added successfully!\n";
     cout << "Student ID: " << s.id << "\n";
 }
@@ -151,6 +224,7 @@ void updateStudent() {
     }
 
     calculate(students[index]);
+    saveData();
 
     cout << "Student updated successfully!\n";
 }
@@ -165,6 +239,7 @@ void deleteStudent() {
     }
 
     students.erase(students.begin() + index);
+    saveData();
 
     cout << "Student deleted successfully.\n";
 }
@@ -174,6 +249,8 @@ void sortStudents() {
          [](const Student &a, const Student &b) {
              return a.average > b.average;
          });
+
+    saveData();
 
     cout << "Students sorted by average (highest first).\n";
     showAllStudents();
@@ -244,6 +321,10 @@ void showMenu() {
 }
 
 int main() {
+    loadData();
+
+    cout << "Student data loaded successfully.\n";
+
     int choice;
 
     do {
@@ -280,6 +361,8 @@ int main() {
                 break;
 
             case 0:
+                saveData();
+                cout << "Data saved successfully.\n";
                 cout << "Thank you for using Student Grade Manager!\n";
                 break;
 
