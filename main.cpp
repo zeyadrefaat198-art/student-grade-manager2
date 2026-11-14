@@ -25,16 +25,13 @@ const string FILE_NAME = "students.txt";
 
 void calculate(Student &s) {
     s.total = 0;
-
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
         s.total += s.grades[i];
-    }
 
     s.average = s.total / 3.0;
     s.status = (s.average >= 50) ? "Passed" : "Failed";
 }
 
-// Save students to file
 void saveData() {
     ofstream file(FILE_NAME);
 
@@ -47,9 +44,8 @@ void saveData() {
         file << s.id << "\n";
         file << s.name << "\n";
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)
             file << s.grades[i] << " ";
-        }
 
         file << "\n";
     }
@@ -57,13 +53,9 @@ void saveData() {
     file.close();
 }
 
-// Load students from file
 void loadData() {
     ifstream file(FILE_NAME);
-
-    if (!file.is_open()) {
-        return;
-    }
+    if (!file.is_open()) return;
 
     Student s;
     int maxId = 0;
@@ -71,9 +63,7 @@ void loadData() {
     while (file >> s.id) {
         file.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        if (!getline(file, s.name)) {
-            break;
-        }
+        if (!getline(file, s.name)) break;
 
         bool validGrades = true;
 
@@ -84,18 +74,13 @@ void loadData() {
             }
         }
 
-        if (!validGrades) {
-            break;
-        }
+        if (!validGrades) break;
 
         file.ignore(numeric_limits<streamsize>::max(), '\n');
-
         calculate(s);
         students.push_back(s);
 
-        if (s.id > maxId) {
-            maxId = s.id;
-        }
+        if (s.id > maxId) maxId = s.id;
     }
 
     nextId = maxId + 1;
@@ -108,9 +93,7 @@ int getInteger(string message) {
     while (true) {
         cout << message;
 
-        if (cin >> value) {
-            return value;
-        }
+        if (cin >> value) return value;
 
         cout << "Invalid input. Try again.\n";
         cin.clear();
@@ -124,9 +107,8 @@ double getGrade(string message) {
     while (true) {
         cout << message;
 
-        if (cin >> grade && grade >= 0 && grade <= 100) {
+        if (cin >> grade && grade >= 0 && grade <= 100)
             return grade;
-        }
 
         cout << "Enter a grade between 0 and 100.\n";
         cin.clear();
@@ -135,18 +117,14 @@ double getGrade(string message) {
 }
 
 int findStudent(int id) {
-    for (int i = 0; i < (int)students.size(); i++) {
-        if (students[i].id == id) {
-            return i;
-        }
-    }
+    for (int i = 0; i < (int)students.size(); i++)
+        if (students[i].id == id) return i;
 
     return -1;
 }
 
 void addStudent() {
     Student s;
-
     s.id = nextId++;
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -154,15 +132,13 @@ void addStudent() {
     cout << "Enter student name: ";
     getline(cin, s.name);
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
         s.grades[i] = getGrade(
             "Enter grade for subject " + to_string(i + 1) + ": "
         );
-    }
 
     calculate(s);
     students.push_back(s);
-
     saveData();
 
     cout << "\nStudent added successfully!\n";
@@ -174,10 +150,8 @@ void displayStudent(const Student &s) {
     cout << "ID: " << s.id << "\n";
     cout << "Name: " << s.name << "\n";
 
-    for (int i = 0; i < 3; i++) {
-        cout << "Subject " << i + 1 << ": "
-             << s.grades[i] << "\n";
-    }
+    for (int i = 0; i < 3; i++)
+        cout << "Subject " << i + 1 << ": " << s.grades[i] << "\n";
 
     cout << "Total: " << s.total << "\n";
     cout << "Average: " << fixed << setprecision(2)
@@ -192,20 +166,18 @@ void showAllStudents() {
         return;
     }
 
-    for (const Student &s : students) {
+    for (const Student &s : students)
         displayStudent(s);
-    }
 }
 
 void searchStudent() {
     int id = getInteger("Enter student ID: ");
     int index = findStudent(id);
 
-    if (index == -1) {
+    if (index == -1)
         cout << "Student not found.\n";
-    } else {
+    else
         displayStudent(students[index]);
-    }
 }
 
 void updateStudent() {
@@ -217,11 +189,10 @@ void updateStudent() {
         return;
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
         students[index].grades[i] = getGrade(
             "Enter new grade for subject " + to_string(i + 1) + ": "
         );
-    }
 
     calculate(students[index]);
     saveData();
@@ -262,48 +233,33 @@ void showStatistics() {
         return;
     }
 
-    int passed = 0;
-    int failed = 0;
+    int passed = 0, failed = 0;
     double totalAverage = 0;
-
-    int highestIndex = 0;
-    int lowestIndex = 0;
+    int highestIndex = 0, lowestIndex = 0;
 
     for (int i = 0; i < (int)students.size(); i++) {
         totalAverage += students[i].average;
 
-        if (students[i].status == "Passed") {
-            passed++;
-        } else {
-            failed++;
-        }
+        if (students[i].status == "Passed") passed++;
+        else failed++;
 
-        if (students[i].average > students[highestIndex].average) {
+        if (students[i].average > students[highestIndex].average)
             highestIndex = i;
-        }
 
-        if (students[i].average < students[lowestIndex].average) {
+        if (students[i].average < students[lowestIndex].average)
             lowestIndex = i;
-        }
     }
 
     cout << "\n========== CLASS STATISTICS ==========\n";
     cout << "Total students: " << students.size() << "\n";
     cout << "Passed: " << passed << "\n";
     cout << "Failed: " << failed << "\n";
-
-    cout << "Class average: "
-         << fixed << setprecision(2)
+    cout << "Class average: " << fixed << setprecision(2)
          << totalAverage / students.size() << "\n";
-
-    cout << "Highest average: "
-         << students[highestIndex].average
+    cout << "Highest average: " << students[highestIndex].average
          << " (" << students[highestIndex].name << ")\n";
-
-    cout << "Lowest average: "
-         << students[lowestIndex].average
+    cout << "Lowest average: " << students[lowestIndex].average
          << " (" << students[lowestIndex].name << ")\n";
-
     cout << "======================================\n";
 }
 
@@ -332,33 +288,13 @@ int main() {
         choice = getInteger("Enter your choice: ");
 
         switch (choice) {
-            case 1:
-                addStudent();
-                break;
-
-            case 2:
-                showAllStudents();
-                break;
-
-            case 3:
-                searchStudent();
-                break;
-
-            case 4:
-                updateStudent();
-                break;
-
-            case 5:
-                deleteStudent();
-                break;
-
-            case 6:
-                sortStudents();
-                break;
-
-            case 7:
-                showStatistics();
-                break;
+            case 1: addStudent(); break;
+            case 2: showAllStudents(); break;
+            case 3: searchStudent(); break;
+            case 4: updateStudent(); break;
+            case 5: deleteStudent(); break;
+            case 6: sortStudents(); break;
+            case 7: showStatistics(); break;
 
             case 0:
                 saveData();
@@ -374,3 +310,4 @@ int main() {
 
     return 0;
 }
+
