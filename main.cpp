@@ -24,6 +24,7 @@ int nextId = 1;
 const string FILE_NAME = "students.txt";
 
 void calculate(Student &s) {
+
     s.total = 0;
     for (int i = 0; i < 3; i++)
         s.total += s.grades[i];
@@ -275,19 +276,25 @@ void showMenu() {
     cout << "0. Exit\n";
     cout << "==================================\n";
 }
-
 int main() {
-    loadData();
+    ifstream testFile(FILE_NAME);
 
-    cout << "Student data loaded successfully.\n";
+    if (testFile.is_open()) {
+        loadData();
+        cout << "Student data loaded successfully.\n";
+        testFile.close();
+    } else {
+        cout << "No saved data found. Starting with an empty list.\n";
+    }
+
+
 
     int choice;
+do {
+    showMenu();
+    choice = getInteger("Enter your choice: ");
 
-    do {
-        showMenu();
-        choice = getInteger("Enter your choice: ");
-
-        switch (choice) {
+    switch (choice) {
             case 1: addStudent(); break;
             case 2: showAllStudents(); break;
             case 3: searchStudent(); break;
