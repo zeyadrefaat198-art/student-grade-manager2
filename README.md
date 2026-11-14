@@ -37,3 +37,6 @@ Student records are stored in "students.txt" in the project directory.
 Developer
 
 Zeyad Mohamed
+## Screenshot
+
+![Student Grade Manager](screenshots/student-manager.jpg)
