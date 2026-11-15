@@ -337,12 +337,18 @@ void showMenu() {
   cout << "==================================\n";
 }
 int main() {
+  ifstream checkFile(FILE_NAME);
+  bool fileExists = checkFile.good();
+  checkFile.close();
+
   if (loadData()) {
     cout << "Student data loaded successfully.\n";
+  } else if (fileExists) {
+    cout << "Error: Student data file is invalid. Original file preserved.\n";
+    return 1;
   } else {
     cout << "No saved data found. Starting with an empty list.\n";
   }
-
   int choice;
   do {
     showMenu();
