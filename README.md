@@ -31,6 +31,8 @@ clang++ -std=c++17 -Wall -Wextra main.cpp -o student_manager
 
 ## Data Storage
 Student records are stored in `students.txt` in the project directory.
+## Screenshot
 
+![Student Grade Manager](screenshots/student-manager.jpg)
 ## Developer
 Zeyad Mohamed Refaat
